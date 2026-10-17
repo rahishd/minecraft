@@ -11,6 +11,7 @@ public class CydevMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		com.cydev.mod.command.CityCommand.register();
 		LOGGER.info("Cydev loaded - city simulation ready.");
 	}
 }

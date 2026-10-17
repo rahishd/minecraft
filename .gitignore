@@ -4,3 +4,7 @@ run/
 .idea/
 *.iml
 .vscode/
+
+# Third-party texture pack: license unconfirmed, keep local only
+resourcepack/assets/
+resourcepack/pack.png

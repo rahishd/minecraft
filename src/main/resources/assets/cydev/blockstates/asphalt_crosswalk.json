@@ -1,0 +1,6 @@
+{
+	"variants": {
+		"axis=z": {"model": "cydev:block/road/asphalt_crosswalk"},
+		"axis=x": {"model": "cydev:block/road/asphalt_crosswalk", "y": 90}
+	}
+}

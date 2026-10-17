@@ -1,0 +1,14 @@
+{
+	"variants": {
+		"": [
+			{"model": "cydev:block/road/asphalt", "weight": 3},
+			{"model": "cydev:block/road/asphalt", "y": 90, "weight": 3},
+			{"model": "cydev:block/road/asphalt", "y": 180, "weight": 3},
+			{"model": "cydev:block/road/asphalt", "y": 270, "weight": 3},
+			{"model": "cydev:block/road/asphalt_b"},
+			{"model": "cydev:block/road/asphalt_b", "y": 90},
+			{"model": "cydev:block/road/asphalt_b", "y": 180},
+			{"model": "cydev:block/road/asphalt_b", "y": 270}
+		]
+	}
+}

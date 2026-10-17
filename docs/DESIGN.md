@@ -129,3 +129,52 @@ Still to do: GUI/NPC counters and boards, physical enforcement of land/stop orde
 world (block placement), configurable authority rules (not persisted), the real
 Municipal Assembly election, then roads/zoning, utilities, economy, traffic, services,
 property market, vehicles, citizens, HUD.
+
+## Status update: roads and zoning, first slice (phase 2)
+First physical game content. Pure-Java logic is unit tested (63 tests in total, 34 new);
+the Minecraft adapters compile but have not been exercised in a running game yet.
+
+Road blocks (`registry/ModBlocks`, `world/block/*`): thin 2/16 asphalt slabs, 256x256 tiling
+textures, models/blockstates/item definitions/loot tables under `assets/cydev` and `data/cydev`.
+- `asphalt` (random rotation and two textures so repeated blocks do not look stamped),
+  `asphalt_center_line` (double yellow), `asphalt_lane_dashed`, `asphalt_crosswalk` (these three
+  have an `axis` property, placed along the player's facing), `asphalt_edge_line` and
+  `asphalt_kerb` (`facing` property = the edge the line or kerb is on; the kerb is a raised
+  concrete strip, collision matches the model).
+- Textures are generated, original and CC0: `java tools/GenRoadTextures.java` rewrites them.
+- Creative tab "Cydev" holds the blocks and the wand. No crafting recipes on purpose: roads are
+  meant to be built by the Mayor's administration (government projects).
+
+Road network (`network/road`, in the existing scaffold package rather than `sim/network/road`):
+- `RoadNetwork` holds every drivable road block (kerbs are decoration, not drivable). Two blocks
+  connect when they touch on a side at the same height or one step apart (slopes).
+- Connectivity is derived from the block set, so it cannot go stale: `connected`, `path`
+  (shortest route), `componentOf`/`components`, `isJunction`/`isDeadEnd`, `stats`.
+- `RoadGraph` reduces it to junction/dead-end nodes and edges (stretches of plain road, with
+  their block paths), ready for routing and traffic. Closed loops are anchored on one block.
+- The world stays in sync through `RoadBlock.onBlockAdded/onStateReplaced`, which read the block
+  now in the world, so replacing, rotating, breaking or `/setblock` all work. Overworld only,
+  like cities. Saved as `data/cydev_roads.dat` (`RoadData`), so no chunk scanning at startup.
+
+Zoning (`sim/zone`): `ZoneType` RESIDENTIAL/COMMERCIAL/INDUSTRIAL/OFFICE, `ZonePlot`, one
+`ZoneMap` per city in a `ZoneRegistry`, rules in `ZoningService` (errors as strings, like the
+other services). Saved as `data/cydev_zones.dat` (`ZoneData`).
+- Land must be the city's own: the city is found with `ExpansionService.cityAt` and the whole
+  rectangle must lie inside that city's regions (several adjacent regions are fine, two cities
+  are not). Only that city's Mayor or one of its Ward Chairpersons may zone or clear; the Deputy
+  Mayor and appointed staff may not. A selection is at most 96 x 96 blocks.
+- Painting over existing zoning replaces it and keeps the rest of the old plots, so plots of a
+  city never overlap. Zoning the same type over an already-zoned area is rejected.
+- When a Mayor carves a new city out of their land (`/cydev expand`), the zoning inside the
+  carved area moves to the new city.
+
+Zoning Wand (`world/item`): left-click = corner 1, right-click block = corner 2, right-click
+air = zone the selection, sneak + right-click = cycle zone type. Selections are in memory only.
+Commands: `/cydev zone type|apply|clear|here|summary <city>` and
+`/cydev road here|summary|connected <from> <to>`.
+
+Still to do for this slice: a client overlay that draws plots and the selection (only action-bar
+text and particles for now); require road frontage for zoning and tie zoned plots to demand/growth
+(phase 4); government gating of road building (city land, permits, stop/ban orders) once the
+physical enforcement of orders exists; sidewalks, junction/intersection blocks and traffic signs;
+verifying the blocks and models visually in a running client.

@@ -1,0 +1,6 @@
+{
+	"variants": {
+		"axis=z": {"model": "cydev:block/road/asphalt_lane_dashed"},
+		"axis=x": {"model": "cydev:block/road/asphalt_lane_dashed", "y": 90}
+	}
+}

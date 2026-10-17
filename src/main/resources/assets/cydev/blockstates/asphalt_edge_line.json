@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": {"model": "cydev:block/road/asphalt_edge_line"},
+		"facing=east": {"model": "cydev:block/road/asphalt_edge_line", "y": 90},
+		"facing=south": {"model": "cydev:block/road/asphalt_edge_line", "y": 180},
+		"facing=west": {"model": "cydev:block/road/asphalt_edge_line", "y": 270}
+	}
+}

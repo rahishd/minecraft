@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": {"model": "cydev:block/road/asphalt_kerb"},
+		"facing=east": {"model": "cydev:block/road/asphalt_kerb", "y": 90},
+		"facing=south": {"model": "cydev:block/road/asphalt_kerb", "y": 180},
+		"facing=west": {"model": "cydev:block/road/asphalt_kerb", "y": 270}
+	}
+}

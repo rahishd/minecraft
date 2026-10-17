@@ -1,0 +1,10 @@
+{
+	"itemGroup.cydev.main": "Cydev",
+	"item.cydev.zoning_wand": "Zoning Wand",
+	"block.cydev.asphalt": "Asphalt",
+	"block.cydev.asphalt_center_line": "Asphalt with Centre Line",
+	"block.cydev.asphalt_lane_dashed": "Asphalt with Lane Dashes",
+	"block.cydev.asphalt_edge_line": "Asphalt with Edge Line",
+	"block.cydev.asphalt_crosswalk": "Asphalt Crosswalk",
+	"block.cydev.asphalt_kerb": "Asphalt with Kerb"
+}

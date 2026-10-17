@@ -1,0 +1,10 @@
+{
+	"values": [
+		"cydev:asphalt",
+		"cydev:asphalt_center_line",
+		"cydev:asphalt_lane_dashed",
+		"cydev:asphalt_edge_line",
+		"cydev:asphalt_crosswalk",
+		"cydev:asphalt_kerb"
+	]
+}

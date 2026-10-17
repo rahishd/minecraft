@@ -1,0 +1,16 @@
+{
+	"type": "minecraft:block",
+	"pools": [
+		{
+			"rolls": 1.0,
+			"bonus_rolls": 0.0,
+			"conditions": [
+				{"condition": "minecraft:survives_explosion"}
+			],
+			"entries": [
+				{"type": "minecraft:item", "name": "cydev:asphalt_lane_dashed"}
+			]
+		}
+	],
+	"random_sequence": "cydev:blocks/asphalt_lane_dashed"
+}

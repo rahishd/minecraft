@@ -23,6 +23,7 @@ import com.cydev.mod.sim.city.Rect;
 import com.cydev.mod.sim.city.Ward;
 import com.cydev.mod.world.persistence.CityData;
 import com.cydev.mod.world.persistence.RecordsData;
+import com.cydev.mod.world.persistence.ZoneData;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
@@ -522,6 +523,9 @@ public final class GovCommand {
 								if (err != null) {
 									return fail(e.src(), err);
 								}
+								ZoneData zones = ZoneData.get(e.src().getServer());
+								zones.registry().transfer(e.city().id, out[0].id, r);
+								zones.markDirty();
 								e.save();
 								return ok(e.src(), "New city " + out[0].name + " created from " + e.city().name
 									+ ". An election for its first Mayor is open; " + e.city().mayorName

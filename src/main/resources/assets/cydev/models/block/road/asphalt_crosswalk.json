@@ -1,0 +1,6 @@
+{
+	"parent": "cydev:block/road/road_slab",
+	"textures": {
+		"top": "cydev:block/road/asphalt_crosswalk"
+	}
+}

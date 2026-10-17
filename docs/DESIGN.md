@@ -30,3 +30,21 @@ Concept: a Cities: Skylines II style systems simulation inside Minecraft.
 1 Foundation  2 Roads+zoning  3 Utilities  4 Demand/growth
 5 Citizens+economy  6 Traffic  7 Services  8 UI+polish
 Government/election/expansion runs alongside phases 1-5.
+
+## Visual style (decided)
+Goal: realistic houses, roads and environment, not the default blocky look.
+- A: realistic textures + detailed custom block models (thin slabs for roads
+  with lane markings and kerbs; multi-part houses with slanted roofs, window
+  frames, chimneys, fences). Stays grid-aligned.
+- D: recommend an Iris shader pack for smooth lighting, shadows, water and
+  reflections. Players install it themselves; the mod only documents it.
+- Not doing (for now): custom 3D prefab meshes and spline roads.
+- Resource pack source lives in `resourcepack/`; mod models/textures in
+  `src/main/resources/assets/cydev/`.
+
+## Property market (decided)
+- Anyone can own land plots and houses (deeds recorded per plot).
+- Owners can list land or a house for sale; buyers pay through the economy
+  system; deed transfers to the buyer. Zoned city land sale may need Mayor
+  approval; property tax goes to the city treasury.
+- Packages: `property/{land,ownership,market,deed,tax}`.

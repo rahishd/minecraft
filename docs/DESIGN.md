@@ -80,3 +80,30 @@ default blocky look.
   `models/entity/vehicle`, `textures/entity/vehicle`, `sounds/vehicle`.
 - Open question: "cars and their assess" read as assets (models, textures,
   sounds). Correct me if you meant something else.
+
+## Nepal local-government model (supersedes earlier "Mayor approves everything")
+Source: Nepal_Municipal_Ward_Office_Minecraft_Mod_Design_Brief.pdf. Gameplay
+abstraction only - not legally authoritative; all rules are configurable.
+- One municipality contains wards. A ward is a service office inside the
+  municipality, not a separate government, with no independent budget.
+- Elected: Mayor (+ Deputy Mayor, simplified here as the runner-up) and each
+  Ward Chairperson. Term: 30 real days, per decision above.
+- Appointed staff: CAO (administrative lead, not elected), Admin, Engineer,
+  Revenue, Accounts officers, Inspector (by the Mayor); Ward Secretary and
+  committee members (by the Ward Chairperson).
+- The Mayor is NOT the approver of every request. Citizen services follow
+  per-service authority rules (`AuthorityRules`): ward staff issue simple
+  services directly, otherwise refer to the responsible department.
+- Projects: Ward Chair submits -> Engineer technical review -> Accounts budget
+  check -> Mayor (Executive) final approval -> procurement -> work ->
+  Inspector sign-off. Nothing can be skipped; insufficient funds defer the
+  project with a recorded reason.
+- Every status change goes to an audit log (actor, role, record, old/new
+  status, time, reason). Staff cannot process their own case.
+
+## Status (as of this commit)
+Done + unit tested (pure Java): roles, wards, elections for mayor and ward
+chair, appointments, service-case workflow, project/budget workflow, audit.
+Persisted: cities, wards, elections, appointments.
+Not yet: persistence of cases/projects/budget/audit, GUI/NPC counters, request
+and project boards, citizen satisfaction score, sample scenario data.

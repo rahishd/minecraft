@@ -138,8 +138,9 @@ class GovernmentTest {
 	// ---- projects ----
 
 	ProjectProposal proposalToBudgetReview(long estimate, long allocated) {
-		ProjectProposal p = new ProjectProposal(wardId, "Drainage", "Ward 3 main road", 1, estimate, 200,
-			new BudgetLine(2083, "Roads & Drainage", allocated, "Municipal revenue"));
+		BudgetLine line = new BudgetLine(1, 2083, "Roads & Drainage", allocated, "Municipal revenue");
+		line.assemblyApproved = true;
+		ProjectProposal p = new ProjectProposal(1, wardId, "Drainage", "Ward 3 main road", 1, estimate, 200, line);
 		assertNull(projects.move(p, chair, CaseStatus.SUBMITTED, null, T0));
 		assertNull(projects.move(p, engineer, CaseStatus.TECHNICAL_REVIEW, null, T0));
 		assertNull(projects.move(p, engineer, CaseStatus.BUDGET_REVIEW, null, T0));
@@ -182,8 +183,9 @@ class GovernmentTest {
 
 	@Test
 	void mayorCannotSkipTechnicalReview() {
-		ProjectProposal p = new ProjectProposal(wardId, "Road", "x", 1, 100, 50,
-			new BudgetLine(2083, "Roads", 1000, "Municipal"));
+		BudgetLine line = new BudgetLine(1, 2083, "Roads", 1000, "Municipal");
+		line.assemblyApproved = true;
+		ProjectProposal p = new ProjectProposal(1, wardId, "Road", "x", 1, 100, 50, line);
 		projects.move(p, chair, CaseStatus.SUBMITTED, null, T0);
 		assertNotNull(projects.move(p, mayor, CaseStatus.APPROVED, null, T0));
 		assertFalse(p.technicallyCleared);

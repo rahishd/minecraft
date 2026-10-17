@@ -21,7 +21,7 @@ public enum Position {
 	WARD_CHAIR(Level.WARD, false),
 	WARD_SECRETARY(Level.WARD, true),
 	COMMITTEE_MEMBER(Level.WARD, true),
-	CONTRACTOR(Level.NONE, false);
+	CONTRACTOR(Level.MUNICIPAL, true);
 
 	public enum Level { NONE, MUNICIPAL, WARD }
 

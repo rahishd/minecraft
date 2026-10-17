@@ -23,6 +23,7 @@ public class CydevMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		CityCommand.register();
+		com.cydev.mod.command.GovCommand.register();
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			if (server.getTicks() % ELECTION_CHECK_TICKS != 0) {
 				return;

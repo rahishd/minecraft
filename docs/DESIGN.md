@@ -107,3 +107,25 @@ chair, appointments, service-case workflow, project/budget workflow, audit.
 Persisted: cities, wards, elections, appointments.
 Not yet: persistence of cases/projects/budget/audit, GUI/NPC counters, request
 and project boards, citizen satisfaction score, sample scenario data.
+
+## Status update: administration layer complete (commands only, no GUI)
+Added and unit tested (29 tests incl. save/load round trips):
+- Everything persisted: cities, wards, elections, cases, projects, budgets, audit log, federations.
+- Municipal Assembly = Mayor + Deputy + Ward Chairs; a budget line needs a majority
+  before any project can use it.
+- Stop / lift / ban orders on works (Mayor, Inspector, own-ward Chair; ban = Mayor only).
+- Judicial matters: DISPUTE_MEDIATION cases go to the Deputy Mayor.
+- Administration score (0-100) from ratings, resolution rate, timeliness, delivery.
+- Land claims (rectangles), carving a new city out of a city (new election, original
+  Mayor stays), federations (majority of member mayors + invited mayor accepts).
+- Sample data: `/cydev scenario load` (operator) builds the "Demo" city.
+
+Command map: `case file|evidence|move|info|list|rate`, `project propose|move|budgetcheck|
+contractor|progress|stop|lift|ban|info|list`, `budget add|list|vote`, `score`, `audit`,
+`land claim|here`, `expand`, `federation create|propose|vote|accept|list`,
+plus `city ...` and `ward ...` from earlier.
+
+Still to do: GUI/NPC counters and boards, physical enforcement of land/stop orders in the
+world (block placement), configurable authority rules (not persisted), the real
+Municipal Assembly election, then roads/zoning, utilities, economy, traffic, services,
+property market, vehicles, citizens, HUD.

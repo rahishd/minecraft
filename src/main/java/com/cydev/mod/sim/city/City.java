@@ -26,6 +26,10 @@ public class City implements ElectedOffice {
 	/** Municipal staff: CAO, engineers, accounts, etc. */
 	public final List<Appointment> appointments = new ArrayList<>();
 	public final List<Ward> wards = new ArrayList<>();
+	/** City this one was carved out of; null for an original city. */
+	public UUID parentId;
+	/** Land belonging to this city (x/z rectangles, no overlap with other cities). */
+	public final List<Rect> regions = new ArrayList<>();
 
 	public City(UUID id, String name) {
 		this.id = id;

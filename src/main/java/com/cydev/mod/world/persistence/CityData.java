@@ -8,6 +8,7 @@ import com.cydev.mod.government.election.Election;
 import com.cydev.mod.government.election.ElectionState;
 import com.cydev.mod.sim.city.City;
 import com.cydev.mod.sim.city.CityRegistry;
+import com.cydev.mod.sim.city.Rect;
 import com.cydev.mod.sim.city.Ward;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -50,6 +51,13 @@ public class CityData extends PersistentState {
 		Codec.STRING.fieldOf("role").forGetter(a -> a.position().name())
 	).apply(i, (id, name, role) -> new Appointment(id, name, Position.valueOf(role))));
 
+	private static final Codec<Rect> RECT_CODEC = RecordCodecBuilder.create(i -> i.group(
+		Codec.INT.fieldOf("minX").forGetter(Rect::minX),
+		Codec.INT.fieldOf("minZ").forGetter(Rect::minZ),
+		Codec.INT.fieldOf("maxX").forGetter(Rect::maxX),
+		Codec.INT.fieldOf("maxZ").forGetter(Rect::maxZ)
+	).apply(i, Rect::new));
+
 	private static final Codec<Ward> WARD_CODEC = RecordCodecBuilder.create(i -> i.group(
 		Uuids.CODEC.fieldOf("id").forGetter(w -> w.id),
 		Codec.INT.fieldOf("number").forGetter(w -> w.number),
@@ -85,8 +93,10 @@ public class CityData extends PersistentState {
 		APPOINTMENT_CODEC.listOf().optionalFieldOf("appointments", List.of()).forGetter(c -> c.appointments),
 		Uuids.CODEC.optionalFieldOf("deputy").forGetter(c -> Optional.ofNullable(c.deputyId)),
 		Codec.STRING.optionalFieldOf("deputyName").forGetter(c -> Optional.ofNullable(c.deputyName)),
-		WARD_CODEC.listOf().optionalFieldOf("wards", List.of()).forGetter(c -> c.wards)
-	).apply(i, (id, name, treasury, mayor, mayorName, termStart, termEnd, election, appointments, deputy, deputyName, wards) -> {
+		WARD_CODEC.listOf().optionalFieldOf("wards", List.of()).forGetter(c -> c.wards),
+		Uuids.CODEC.optionalFieldOf("parent").forGetter(c -> Optional.ofNullable(c.parentId)),
+		RECT_CODEC.listOf().optionalFieldOf("regions", List.of()).forGetter(c -> c.regions)
+	).apply(i, (id, name, treasury, mayor, mayorName, termStart, termEnd, election, appointments, deputy, deputyName, wards, parent, regions) -> {
 		City city = new City(id, name);
 		city.treasury = treasury;
 		city.mayorId = mayor.orElse(null);
@@ -98,6 +108,8 @@ public class CityData extends PersistentState {
 		city.deputyId = deputy.orElse(null);
 		city.deputyName = deputyName.orElse(null);
 		city.wards.addAll(wards);
+		city.parentId = parent.orElse(null);
+		city.regions.addAll(regions);
 		return city;
 	}));
 

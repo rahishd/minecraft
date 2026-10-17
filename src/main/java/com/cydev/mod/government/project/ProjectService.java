@@ -23,6 +23,12 @@ public class ProjectService {
 
 	/** Returns an error message, or null on success. */
 	public String move(ProjectProposal p, Actor a, CaseStatus to, String reason, long now) {
+		if (p.banned) {
+			return "This project is banned: " + p.orderReason;
+		}
+		if (p.stopped) {
+			return "Work is stopped by order: " + p.orderReason;
+		}
 		String err = check(p, a, to, reason);
 		if (err != null) {
 			return err;
@@ -55,6 +61,101 @@ public class ProjectService {
 			default -> {
 			}
 		}
+	}
+
+	private static boolean workUnderway(CaseStatus s) {
+		return s == CaseStatus.APPROVED || s == CaseStatus.PROCUREMENT
+			|| s == CaseStatus.IN_PROGRESS || s == CaseStatus.INSPECTION;
+	}
+
+	private void record(ProjectProposal p, Actor a, String action, CaseStatus old, CaseStatus now2, long now, String reason) {
+		AuditEntry entry = new AuditEntry(a.id(), a.name(), a.position(), action, p.id, old, now2, now, reason);
+		p.history.add(entry);
+		globalLog.add(entry);
+	}
+
+	/**
+	 * Stop order: pauses approved work in the issuer's area. The Mayor and the
+	 * Inspector may stop any project; a Ward Chairperson only in their own ward
+	 * (urgent safety). A reason is mandatory.
+	 */
+	public String stop(ProjectProposal p, Actor a, String reason, long now) {
+		boolean ownWardChair = a.position() == Position.WARD_CHAIR && Objects.equals(a.wardId(), p.wardId);
+		if (a.position() != Position.MAYOR && a.position() != Position.INSPECTOR && !ownWardChair) {
+			return "Only the Mayor, the Inspector or the ward's Chairperson can stop works.";
+		}
+		if (reason == null || reason.isBlank()) {
+			return "A reason is required for a stop order.";
+		}
+		if (p.banned || p.stopped) {
+			return "Project is already stopped or banned.";
+		}
+		if (!workUnderway(p.status)) {
+			return "There is no approved work to stop.";
+		}
+		p.stopped = true;
+		p.orderReason = reason;
+		record(p, a, "STOP_ORDER", p.status, p.status, now, reason);
+		return null;
+	}
+
+	/** Lifts a stop order. Only the Mayor or the Inspector; bans cannot be lifted. */
+	public String lift(ProjectProposal p, Actor a, String reason, long now) {
+		if (a.position() != Position.MAYOR && a.position() != Position.INSPECTOR) {
+			return "Only the Mayor or the Inspector can lift a stop order.";
+		}
+		if (p.banned) {
+			return "A banned project cannot be resumed.";
+		}
+		if (!p.stopped) {
+			return "Project is not stopped.";
+		}
+		p.stopped = false;
+		p.orderReason = null;
+		record(p, a, "STOP_LIFTED", p.status, p.status, now, reason);
+		return null;
+	}
+
+	/** Permanent ban by the Mayor. Releases committed funds; spent money is not refunded. */
+	public String ban(ProjectProposal p, Actor a, String reason, long now) {
+		if (a.position() != Position.MAYOR) {
+			return "Only the Mayor can ban a project.";
+		}
+		if (reason == null || reason.isBlank()) {
+			return "A reason is required for a ban.";
+		}
+		if (p.banned || p.status == CaseStatus.COMPLETED || p.status == CaseStatus.CLOSED) {
+			return "Project is already banned or completed.";
+		}
+		CaseStatus old = p.status;
+		if (workUnderway(old)) {
+			p.budgetLine.committed -= p.estimate;
+		}
+		p.banned = true;
+		p.stopped = false;
+		p.orderReason = reason;
+		p.status = CaseStatus.REJECTED;
+		record(p, a, "BAN", old, CaseStatus.REJECTED, now, reason);
+		return null;
+	}
+
+	/** The contractor or Engineer reports progress while work is underway. */
+	public String setProgress(ProjectProposal p, Actor a, int percent, long now) {
+		if (a.position() != Position.CONTRACTOR && a.position() != Position.ENGINEER) {
+			return "Only the contractor or Engineer can report progress.";
+		}
+		if (p.banned || p.stopped) {
+			return "Work is stopped: " + p.orderReason;
+		}
+		if (p.status != CaseStatus.IN_PROGRESS) {
+			return "Project is not in progress.";
+		}
+		if (percent < 0 || percent > 99) {
+			return "Progress must be 0-99; request inspection to complete.";
+		}
+		p.progressPercent = Math.max(p.progressPercent, percent);
+		record(p, a, "PROGRESS", p.status, p.status, now, percent + "%");
+		return null;
 	}
 
 	/** Sets the contractor when procurement is done. */
@@ -99,6 +200,9 @@ public class ProjectService {
 				if (to == CaseStatus.APPROVED) {
 					if (a.position() != Position.MAYOR) {
 						return "Final approval is given by the Municipal Executive (chaired by the Mayor).";
+					}
+					if (!p.budgetLine.assemblyApproved) {
+						return "Cannot approve: the budget line is not yet passed by the Municipal Assembly.";
 					}
 					if (!p.technicallyCleared) {
 						return "Cannot approve: technical review not cleared.";
@@ -162,6 +266,9 @@ public class ProjectService {
 		}
 		if (p.status != CaseStatus.BUDGET_REVIEW) {
 			return "Project is not in budget review.";
+		}
+		if (!p.budgetLine.assemblyApproved) {
+			return "The budget line " + p.budgetLine.owner + " is not passed by the Municipal Assembly.";
 		}
 		if (p.budgetLine.available() < p.estimate) {
 			AuditEntry entry = new AuditEntry(a.id(), a.name(), a.position(), "PROJECT_STATUS", p.id,

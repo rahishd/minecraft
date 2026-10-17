@@ -8,6 +8,8 @@ public enum ServiceType {
 	RESIDENCE_CERTIFICATE(true, Position.ADMIN_OFFICER),
 	RECOMMENDATION_LETTER(true, Position.ADMIN_OFFICER),
 	BIRTH_REGISTRATION(true, Position.ADMIN_OFFICER),
+	/** Dispute resolution; handled by the Judicial Committee chaired by the Deputy Mayor. */
+	DISPUTE_MEDIATION(false, Position.DEPUTY_MAYOR),
 	/** Need municipal technical / revenue review. */
 	BUILDING_PERMIT(false, Position.ENGINEER),
 	WATER_PIPELINE_PERMIT(false, Position.ENGINEER),
